@@ -18,6 +18,7 @@ public class WeatherForecastController : ControllerBase
         _logger = logger;
     }
 
+    //When the controler sees the HTTPget, then this particular method is going to be called
     [HttpGet(Name = "GetWeatherForecast")]
     public IEnumerable<WeatherForecast> Get()
     {

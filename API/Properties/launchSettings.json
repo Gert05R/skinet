@@ -9,6 +9,7 @@
     }
   },
   "profiles": {
+
     "API": {
       "commandName": "Project",
       "dotnetRunMessages": true,
