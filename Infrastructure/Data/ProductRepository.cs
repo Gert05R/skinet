@@ -27,6 +27,10 @@ namespace Infrastructure.Data
         //In order to retrieve the data from our DB, so our repo is abstracting our data acess methods
         public async Task<Product> GetProductByIdAsync(int Id)
         {
+            
+
+
+
             //throw new NotImplementedException();
             return await _context.Products
             .Include(p => p.ProductType)

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using API.Helpers;
 using Core.Interfaces;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Builder;
@@ -33,6 +34,8 @@ namespace API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped(typeof(IGenericRepository<>), (typeof(GenericRepository<>)));
+            services.AddAutoMapper(typeof(MappingProfiles));
             services.AddControllers();
             //lambda expression
             services.AddDbContext<StoreContext> (x => 
@@ -57,6 +60,9 @@ namespace API
             app.UseHttpsRedirection();
             // in order for us to access our api controller endpoints, they have to be routed to those endpoints via this midlleware
             app.UseRouting();
+
+            app.UseStaticFiles();
+
             //identity and auth
             app.UseAuthorization();
             //this is how our app knows which endpoints are available so they can be routed to

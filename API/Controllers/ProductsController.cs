@@ -7,6 +7,9 @@ using Core.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Core.Interfaces;
+using Core.Specifications;
+using API.DTO;
+using AutoMapper;
 
 //https://www.udemy.com/course/learn-to-build-an-e-commerce-app-with-net-core-and-angular/learn/lecture/18136692#questions/12487512
 namespace API.Controllers
@@ -20,49 +23,83 @@ namespace API.Controllers
     //creates a new instance of storecontext
     public class ProductsController : ControllerBase
     {
+        private readonly IGenericRepository<Product> _productsRepo;
+        private readonly IGenericRepository<ProductBrand> _productBrandRepo;
+        private readonly IGenericRepository<ProductType> _productTypeRepo;
+
+        private readonly IMapper _mapper;
+       
+
         //Initialize field from parameter (_context is initialized)
         //https://www.udemy.com/course/learn-to-build-an-e-commerce-app-with-net-core-and-angular/learn/lecture/18136752#questions
-        
-        private readonly IProductRepository _repo;
-        
+
+
+    
+
         //Obsolete
         //public ProductsController(StoreContext context)
-        public ProductsController(IProductRepository repo)
+        public ProductsController(IGenericRepository<Product> productsRepo,
+        IGenericRepository<ProductBrand> productBrandRepo, IGenericRepository<ProductType> 
+        productTypeRepo, IMapper mapper)
         {
-            _repo = repo;
+            _mapper = mapper;
+            _productsRepo = productsRepo;
+            _productBrandRepo = productBrandRepo;
+            _productTypeRepo = productTypeRepo;
+
             //_context = context; //Is an instance of the db
-            
+
         }
 
         [HttpGet]
 
         //Actionresult is what we return ffrom the controller: controllerBase
-        public async Task<ActionResult<List<Product>>> GetProducts() {
+        public async Task<ActionResult<IReadOnlyList<ProductToReturnDto>>> GetProducts() {
+            
+            var spec = new ProductsWithTypesAndBrandsSpecification();
             
             //var products = await _context.Products.ToListAsync(); //return products from the instance _context
-            var products = await _repo.GetProductsAsync();
+            var products = await _productsRepo.ListAsync(spec);
 
-            return Ok(products);
+            //return Ok(products);
+
+            /*return products.Select(product => new ProductToReturnDto 
+             {
+                Id = product.Id,
+                Name = product.Name,
+                Description = product.Description,
+                PictureUrl = product.PictureUrl,
+                Price = product.Price,
+                ProductBrand = product.ProductBrand.Name,
+                ProductType = product.ProductType.Name
+            }).ToList();*/
+
+            return Ok(_mapper
+            .Map<IReadOnlyList<Product>, IReadOnlyList<ProductToReturnDto>>(products));
         }
 
         [HttpGet("{id}")]
         
-        public async Task<ActionResult<Product>> GetProduct(int id) {
+        public async Task<ActionResult<ProductToReturnDto>> GetProduct(int id) {
 
+            var spec = new ProductsWithTypesAndBrandsSpecification(id);
             //return await _context.Products.FindAsync(id);
-            return await _repo.GetProductByIdAsync(id);
+            //return await _productsRepo.GetEntityWithSpec(spec);
+            var product = await _productsRepo.GetEntityWithSpec(spec);
+
+            return _mapper.Map<Product, ProductToReturnDto>(product);
         }
 
         [HttpGet("brands")]
         public async Task<ActionResult<IReadOnlyList<ProductBrand>>> GetProductBrands()
         {
-            return Ok(await _repo.GetProductBrandsAsync());
+            return Ok(await _productBrandRepo.ListAllAsync());
         }
 
         [HttpGet("types")]
         public async Task<ActionResult<IReadOnlyList<ProductType>>> GetProductTypes()
         {
-            return Ok(await _repo.GetProductTypesAsync());
+            return Ok(await _productTypeRepo.ListAllAsync());
         }
 
     }
