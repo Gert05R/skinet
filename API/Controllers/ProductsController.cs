@@ -10,18 +10,17 @@ using Core.Interfaces;
 using Core.Specifications;
 using API.DTO;
 using AutoMapper;
+using API.Errors;
 
 //https://www.udemy.com/course/learn-to-build-an-e-commerce-app-with-net-core-and-angular/learn/lecture/18136692#questions/12487512
 namespace API.Controllers
 {
-    [ApiController]
-    //the controller in square brackets is just a placeholder for what the class name is called, in this case thus "Products"
-    [Route("api/[controller]")]
+    
     //https://www.udemy.com/course/learn-to-build-an-e-commerce-app-with-net-core-and-angular/learn/lecture/18136714#questions
     //These methods are updated to return the data from the DB
     //By injecting storecontext, this gives us access to the methods in the class.
     //creates a new instance of storecontext
-    public class ProductsController : ControllerBase
+    public class ProductsController : BaseAPiController
     {
         private readonly IGenericRepository<Product> _productsRepo;
         private readonly IGenericRepository<ProductBrand> _productBrandRepo;
@@ -79,13 +78,18 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
-        
+        //Swagger responses
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ProductToReturnDto>> GetProduct(int id) {
 
             var spec = new ProductsWithTypesAndBrandsSpecification(id);
             //return await _context.Products.FindAsync(id);
             //return await _productsRepo.GetEntityWithSpec(spec);
             var product = await _productsRepo.GetEntityWithSpec(spec);
+
+            //Swagger documentation
+            if (product == null) return NotFound(new ApiResponse(404));
 
             return _mapper.Map<Product, ProductToReturnDto>(product);
         }
