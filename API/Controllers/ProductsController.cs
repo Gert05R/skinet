@@ -11,6 +11,7 @@ using Core.Specifications;
 using API.DTO;
 using AutoMapper;
 using API.Errors;
+using API.Helpers;
 
 //https://www.udemy.com/course/learn-to-build-an-e-commerce-app-with-net-core-and-angular/learn/lecture/18136692#questions/12487512
 namespace API.Controllers
@@ -53,12 +54,22 @@ namespace API.Controllers
         [HttpGet]
 
         //Actionresult is what we return ffrom the controller: controllerBase
-        public async Task<ActionResult<IReadOnlyList<ProductToReturnDto>>> GetProducts() {
+        public async Task<ActionResult<Pagination<ProductToReturnDto>>> GetProducts
+        ( [FromQuery] ProductSpecParams productParams) 
+        {
             
-            var spec = new ProductsWithTypesAndBrandsSpecification();
+            var spec = new ProductsWithTypesAndBrandsSpecification(productParams);
+
+            var countSpec = new ProductWithFiltersForCountSpecification(productParams);
+            var totalItems = await _productsRepo.CountAsync(countSpec);
+
             
             //var products = await _context.Products.ToListAsync(); //return products from the instance _context
             var products = await _productsRepo.ListAsync(spec);
+
+            var data = _mapper
+            .Map<IReadOnlyList<Product>, IReadOnlyList<ProductToReturnDto>>(products);
+
 
             //return Ok(products);
 
@@ -73,8 +84,8 @@ namespace API.Controllers
                 ProductType = product.ProductType.Name
             }).ToList();*/
 
-            return Ok(_mapper
-            .Map<IReadOnlyList<Product>, IReadOnlyList<ProductToReturnDto>>(products));
+            return Ok(new Pagination<ProductToReturnDto>(productParams.PageIndex, 
+            productParams.PageSize, totalItems, data));
         }
 
         [HttpGet("{id}")]

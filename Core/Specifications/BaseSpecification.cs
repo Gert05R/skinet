@@ -23,10 +23,39 @@ namespace Core.Specifications
 
         public List<Expression<Func<T, object>>> Includes {get; } = 
         new List<Expression<Func<T, object>>>();
+        //https://www.udemy.com/course/learn-to-build-an-e-commerce-app-with-net-core-and-angular/learn/lecture/18137284#questions
+        public Expression<Func<T, object>> OrderByDescending {get; private set;}
+
+        public Expression<Func<T, object>> OrderBy {get; private set;}
+
+        public int Take {get; private set;}
+
+        public int Skip {get; private set;}
+
+        public bool IsPagingEnabled {get; private set;}
 
         protected void AddInclude(Expression<Func<T, object>> includeExpression) 
         {
             Includes.Add(includeExpression);
         }
+
+        protected void AddOrderBy(Expression<Func<T, object>> OrderByExpression ) 
+        {
+            OrderBy = OrderByExpression;
+        }
+
+        protected void AddOrderByDescending(Expression<Func<T, object>> OrderByDescExpression ) 
+        {
+            OrderByDescending = OrderByDescExpression;
+        }
+
+        protected void ApplyPaging (int skip, int take) 
+        {
+            Skip = skip;
+            Take = take;
+            IsPagingEnabled = true;
+        }
+
+
     }
 }
