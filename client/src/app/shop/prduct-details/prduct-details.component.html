@@ -1,3 +1,4 @@
+<div class="container mt-5">
 <div class="row" *ngIf="product">
   <div class="col-6">
     <img src="{{product.pictureUrl}}" alt="{{product.name}}" class="img-fluid w-100">
@@ -6,7 +7,7 @@
     <h3>
       {{product.name}}
     </h3>
-    <p>
+    <p style="font-size: 2em;">
       {{product.price | currency}}
     </p>
     <div class="d-flex justify-content-start align-items-center">
@@ -25,7 +26,7 @@
     </div>
   </div>
 </div>
-
+</div>
 
 
 

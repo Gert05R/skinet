@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { ShopComponent } from './shop.component';
 import { PrductDetailsComponent } from './prduct-details/prduct-details.component';
@@ -7,7 +6,8 @@ import { PrductDetailsComponent } from './prduct-details/prduct-details.componen
 
 const routes: Routes = [
   {path:'', component: ShopComponent},
-  {path: ':id', component: PrductDetailsComponent},
+  {path: ':id', component: PrductDetailsComponent,
+  data: {breadcrumb: {alias: 'productDetails'}}},
 ];
 
 @NgModule({
