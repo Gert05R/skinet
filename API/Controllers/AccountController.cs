@@ -62,7 +62,7 @@ namespace API.Controllers
             
             var user = await _userManager.FindByUserByClaimsPrincipleWithAddressAsync(User);
 
-            return _mapper.Map<Adress, AddressDto>(user.Adress);
+            return _mapper.Map<Address, AddressDto>(user.Adress);
         }
 
         [Authorize]
@@ -72,11 +72,11 @@ namespace API.Controllers
             
             var user = await _userManager.FindByUserByClaimsPrincipleWithAddressAsync(User);
 
-            user.Adress = _mapper.Map<AddressDto, Adress>(address);
+            user.Adress = _mapper.Map<AddressDto, Address>(address);
 
             var result = await _userManager.UpdateAsync(user);
 
-            if (result.Succeeded) return Ok(_mapper.Map<Adress, AddressDto>(user.Adress));
+            if (result.Succeeded) return Ok(_mapper.Map<Address, AddressDto>(user.Adress));
 
             return BadRequest("Problem updating the user");
 

@@ -4,7 +4,9 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Core.Entities;
+using Core.Entities.OrderAggregate;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data
 {
@@ -21,6 +23,10 @@ namespace Infrastructure.Data
 
         public DbSet<ProductType> ProductTypes {get;set;}
 
+         public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<DeliveryMethod> DeliveryMethods { get; set; }
+
         //OnmodelCreating is the method responsible for creating the migration
         protected override void OnModelCreating(ModelBuilder modelbuilder) 
         {
@@ -34,11 +40,19 @@ namespace Infrastructure.Data
                 {
                     var properties = entityType.ClrType.GetProperties().Where(p => p.PropertyType
                     == typeof(decimal));
+                    var dateTimeProperties = entityType.ClrType.GetProperties()
+                        .Where(p => p.PropertyType == typeof(DateTimeOffset));
 
                     foreach (var property in properties)
                     {
                         modelbuilder.Entity(entityType.Name).Property(property.Name)
                         .HasConversion<double>();
+                    }
+
+                    foreach (var property in dateTimeProperties) 
+                    {
+                        modelbuilder.Entity(entityType.Name).Property(property.Name)
+                        .HasConversion(new DateTimeOffsetToBinaryConverter());
                     }
                 }
             }
