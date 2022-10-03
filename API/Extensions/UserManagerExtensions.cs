@@ -16,7 +16,7 @@ namespace API.Extensions
         {
             var email = user?.FindFirstValue(ClaimTypes.Email);
 
-            return await input.Users.Include(x => x.Adress).SingleOrDefaultAsync
+            return await input.Users.Include(x => x.Address).SingleOrDefaultAsync
             (x => x.Email == email);
         }
 

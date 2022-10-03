@@ -18,7 +18,7 @@ namespace Infrastructure.Identity
                     DisplayName= "Bob",
                     Email = "bob@test.com",
                     UserName= "bob@test.com",
-                    Adress = new Address
+                    Address = new Address
                     {
                         FirstName= "Bob",
                         LastName = "Bobbity",
