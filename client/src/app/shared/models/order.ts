@@ -6,8 +6,6 @@ export interface IOrderToCreate {
   shipToAddress: IAddress;
 }
 
-
-
 export interface IOrderItem {
   productId: number;
   productName: string;
@@ -27,3 +25,6 @@ export interface IOrder {
   total: number;
   status: string;
 }
+
+
+
