@@ -8,6 +8,7 @@ using API.Errors;
 using API.Extensions;
 using AutoMapper;
 using Core.Entities.Identity;
+
 using Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -67,16 +68,16 @@ namespace API.Controllers
 
         [Authorize]
         [HttpPut("address")]
-        public async Task<ActionResult<AddressDto>> UpdateUserAdress(AddressDto address) 
+        public async Task<ActionResult<AddressDto>> UpdateUserAddress(AddressDto address) 
         {
             
             var user = await _userManager.FindByUserByClaimsPrincipleWithAddressAsync(User);
 
-            user.Address = _mapper.Map<AddressDto, Address>(address);
+            user.Address = _mapper.Map<AddressDto, Core.Entities.Identity.Address>(address);
 
             var result = await _userManager.UpdateAsync(user);
 
-            if (result.Succeeded) return Ok(_mapper.Map<Address, AddressDto>(user.Address));
+            if (result.Succeeded) return Ok(_mapper.Map<Core.Entities.Identity.Address, AddressDto>(user.Address));
 
             return BadRequest("Problem updating the user");
 

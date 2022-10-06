@@ -85,16 +85,8 @@ export class AccountService {
   }
 
   updateUserAddress(address: IAddress) {
-
-    if (address.firstName != null &&
-      address.lastName != null &&
-      address.street != null &&
-      address.city != null &&
-      address.state != null &&
-      address.zipcode != null
-      ) {
       return this.http.put<IAddress>(this.baseUrl + 'account/address', address);
-    }
+
 
   }
 

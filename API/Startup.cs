@@ -64,6 +64,8 @@ namespace API
         {
             app.UseMiddleware<ExceptionMiddleware>();
 
+            app.UseSwaggerDocumentation();
+
 
             if (env.IsDevelopment())
             {
@@ -90,7 +92,7 @@ namespace API
             //identity and auth
             app.UseAuthorization();
 
-            app.UseSwaggerDocumentation();
+
 
             //this is how our app knows which endpoints are available so they can be routed to
             app.UseEndpoints(endpoints =>
